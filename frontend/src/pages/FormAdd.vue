@@ -8,6 +8,7 @@ import Textarea from "../components/input/Textarea.vue";
 import Button from "../components/button/Button.vue";
 import SideBar from "../components/navbar/SideBar.vue";
 import { Fetch } from "../api/Fetch.ts";
+import { UseThema } from "../hooks/UseThema.ts";
 
 interface IFormData {
   name: string;

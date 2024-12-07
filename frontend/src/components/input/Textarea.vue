@@ -14,7 +14,7 @@ const emit = defineEmits(["update:value"]);
     </div>
     <div class="w-full shadow-md h-36">
       <textarea
-        class="px-4 py-3 outline-none w-full h-full"
+        class="px-4 py-3 outline-none w-full h-full text-black"
         :name="name"
         :id="name"
         @input="$emit('update:value', $event.target.value)"

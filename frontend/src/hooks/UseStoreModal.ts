@@ -5,13 +5,17 @@ interface IStoreModal {
   onOpen: () => void;
   setOpen: (value: boolean) => void;
 }
+
+
 export const StoreModal:IStoreModal = () => {
-  const isOpen = ref(false);
+const isOpen = ref(false);
   const onOpen = () => {
     isOpen.value = !isOpen.value;
   };
-  const setOpen = (value) => {
+
+  const setOpen = (value: boolean) => {
     isOpen.value = value;
   };
+
   return { isOpen, onOpen, setOpen };
 };
