@@ -1,6 +1,10 @@
 <script setup lang="ts">
-import FormAdd from "./pages/FormAdd.vue";
+import { RouterView } from "vue-router";
+import SideBar from "./components/navbar/SideBar.vue";
 </script>
 <template>
-  <FormAdd />
+    <div class="min-h-screen">
+        <SideBar />
+        <RouterView />
+    </div>
 </template>
