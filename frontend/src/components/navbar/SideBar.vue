@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount } from "vue";
+import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { useRoute } from "vue-router";
 import { StoreModal } from "../../hooks/UseStoreModal.ts";
 import { UseThema } from "../../hooks/UseThema.ts";
-import { RouterLink } from "vue-router";
 
 function createData(icon: string, name: string, path: string) {
     return { icon, name, path };
@@ -23,6 +23,9 @@ const { thema, changeThema } = UseThema();
 const sidebarRef = ref<HTMLElement | null>(null);
 const clickMenu = ref("");
 
+
+const route = useRoute();
+
 const handleClickOutside = (event: MouseEvent) => {
     if (sidebarRef.value && !sidebarRef.value.contains(event.target as Node)) {
         setOpen(false);
@@ -33,9 +36,26 @@ const handleClick = (menuName: string) => {
     clickMenu.value = menuName;
 };
 
+
 onMounted(() => {
     document.addEventListener("mousedown", handleClickOutside);
+
+    const activePath = route.path;
+    const activeMenu = datas.find(data => data.path === activePath);
+    if (activeMenu) {
+        clickMenu.value = activeMenu.name;
+    }
 });
+
+watch(
+    () => route.path,
+    newPath => {
+        const activeMenu = datas.find(data => data.path === newPath);
+        if (activeMenu) {
+            clickMenu.value = activeMenu.name;
+        }
+    }
+);
 
 onBeforeUnmount(() => {
     document.removeEventListener("mousedown", handleClickOutside);
@@ -70,10 +90,9 @@ onBeforeUnmount(() => {
                 </button>
             </div>
 
-            <div v-for="data in datas">
+            <div v-for="data in datas" :key="data.name">
                 <RouterLink :to="data.path">
                     <div
-                        :key="data.name"
                         :class="[
                             'flex items-center gap-3 p-2 rounded-md cursor-pointer transition-colors',
                             clickMenu === data.name

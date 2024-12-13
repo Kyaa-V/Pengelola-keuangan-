@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import FormAdd from "../pages/FormAdd.vue";
-import DataTransaksi from "../pages/DataTransaksi.vue"
+import DataTransaksi from "../pages/DataTransaksi.vue";
+import Home from "../pages/Home.vue";
 
 const routes = [
     {
@@ -12,6 +13,11 @@ const routes = [
         path: "/Data",
         name: "Data Transaksi",
         component: DataTransaksi
+    },
+    {
+        path: "/",
+        name: "Home",
+        component: Home
     }
 ];
 

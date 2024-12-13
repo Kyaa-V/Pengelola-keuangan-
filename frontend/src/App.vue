@@ -4,7 +4,7 @@ import SideBar from "./components/navbar/SideBar.vue";
 </script>
 <template>
     <div class="min-h-screen">
-        <SideBar />
+              <SideBar />
         <RouterView />
     </div>
 </template>

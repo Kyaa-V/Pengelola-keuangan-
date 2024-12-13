@@ -6,8 +6,8 @@ const { thema, changeThema } = UseThema();
 <template>
     <div
         :class="[
-            'pt-10 pb-8 max-w-screen min-h-screen ml-14 rounded shadow-lg',
-            thema === 'day' ? 'bg-white text-black' : 'bg-black text-white'
+            'pt-10 pb-8 max-w-screen min-h-screen w-[calc(100%-56px)] ml-14   rounded shadow-lg overflow-hidden',
+            thema === 'day' ? 'bg-zinc-50 text-black' : 'bg-black text-white'
         ]"
     >
         <slot />
