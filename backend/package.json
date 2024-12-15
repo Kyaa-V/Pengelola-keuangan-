@@ -20,5 +20,8 @@
         "npm": "^10.9.2",
         "ts-node": "^10.9.2",
         "typescript": "^5.7.2"
+    },
+    "dependencies": {
+        "mysql2": "^3.11.5"
     }
 }
