@@ -31,7 +31,7 @@ const selectCategory = (item: string) => {
         <span
             :class="[
                 'text-semibold mb-1',
-                thema === 'day' ? ' text-black' : 'text-white'
+                thema === 'day' ? 'text-black' : 'text-white'
             ]"
             >{{ name }}</span
         >
@@ -41,7 +41,7 @@ const selectCategory = (item: string) => {
                 @click="onOpen"
             >
                 <span
-                    :class="[thema === 'day' ? ' text-white' : ' text-black']"
+                    :class="[thema === 'day' ? ' text-black' : ' text-white']"
                     >{{ category || "Pilih kategory" }}</span
                 >
                 <box-icon :name="iconName"></box-icon>

@@ -18,6 +18,21 @@ const routes = [
         path: "/",
         name: "Home",
         component: Home
+    },
+    {
+        path: "/Profile",
+        name: "Profile",
+        component: Home
+    },
+    {
+        path: "/Analyst",
+        name: "Analyst",
+        component: Home
+    },
+    {
+        path: "/Hutang",
+        name: "Hutang",
+        component: Home
     }
 ];
 
