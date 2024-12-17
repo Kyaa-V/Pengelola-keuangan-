@@ -13,7 +13,7 @@ const datas = [
     createData("group", "Profile", "/Profile"),
     createData("circle-three-quarter", "Analyst", "/Analyst"),
     createData("wallet", " Transaksi", "/Transaksi"),
-    createData("credit-card", "Data Piutang", "/Piutang"),
+    createData("credit-card", "Data Piutang", "/Hutang"),
     createData("purchase-tag-alt", "Data Transaksi", "/Data")
 ];
 

@@ -1,7 +1,9 @@
-export type AddForm = {
+export interface AddForm  {
     name: string;
     modal: number;
-    jual: number;
+    sell: number;
     category: string;
-    nameCs:string
+    nameCustomer:string
+    status:string
+    information?:string
 };

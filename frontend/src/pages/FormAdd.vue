@@ -29,10 +29,23 @@ const formData = ref<IFormData>({
     information: "",
     status: "Pemasukan"
 });
+const errDataForm = ref({});
 
-const handleSubmit = async () => {
-    const data = Fetch.post(formData.value, "api/expend");
+const handleSubmit = async e => {
+    e.preventDefault();
+    const data = await Fetch.post(formData.value, "/add-form-transaksi");
+
+    if (!data.succes) {
+        console.log("succes false:", data.errorData.errors);
+        const fieldError = data?.errorData?.errors.reduce((acc, curr) => {
+            acc[curr.path] = curr.message;
+            return acc;
+        }, {});
+        console.log(fieldError);
+        errDataForm.value = fieldError;
+    }
 };
+
 const handleClick = () => {
     alert("tes");
 };
@@ -48,8 +61,14 @@ const handleClick = () => {
                         placeholder="Masukkan Nama Barang"
                         v-model:value="formData.name"
                     />
+                    <p
+                        v-if="errDataForm.name"
+                        class="text-xs text-red-600 ml-3 mt-1"
+                    >
+                        {{ errDataForm.name }}
+                    </p>
                     <InputRadio
-                        name="nameCS"
+                        name="status"
                         :nameCs="['Pemasukan', 'Modal', 'Setor']"
                         v-model:modelValue="formData.status"
                     />
@@ -98,18 +117,32 @@ const handleClick = () => {
                     </div>
                     <div v-if="formData.status == 'Pemasukan'">
                         <div class="flex gap-2">
-                            <Input
-                                name="Modal"
-                                type="number"
-                                placeholder=" Modal"
-                                v-model:value="formData.modal"
-                            />
-                            <Input
+                            <div>
+                                <Input
+                                    name="Modal"
+                                    type="number"
+                                    placeholder=" Modal"
+                                    v-model:value="formData.modal"
+                                />
+                                <p
+                                    v-if="errDataForm.modal"
+                                    class="text-xs text-red-600 ml-3 mt-1"
+                                >
+                                    {{ errDataForm.modal }}
+                                </p>
+                            </div>
+<div>                            <Input
                                 name="Jual"
                                 type="number"
                                 placeholder=" Jual"
                                 v-model:value="formData.sell"
                             />
+                            <p
+                                v-if="errDataForm.sell"
+                                class="text-xs text-red-600 ml-3 mt-1"
+                            >
+                                {{ errDataForm.sell }}
+                            </p></div>
                         </div>
                         <Select
                             name="Pilih Kategory"
@@ -122,12 +155,23 @@ const handleClick = () => {
                                 'E-wallet'
                             ]"
                         />
-
+                        <p
+                            v-if="errDataForm.category"
+                            class="text-xs text-red-600 ml-3 mt-1"
+                        >
+                            {{ errDataForm.category }}
+                        </p>
                         <InputRadio
                             name="nameCS"
                             :nameCs="['Rizqi', 'Africh']"
                             v-model:modelValue="formData.nameCustomer"
                         />
+                        <p
+                            v-if="errDataForm.nameCustomer"
+                            class="text-xs text-red-600 ml-3 mt-1"
+                        >
+                            {{ errDataForm.nameCustomer }}
+                        </p>
                         <Textarea
                             name="Keterangan"
                             placeholder="Masukkan keterangan"
