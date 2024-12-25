@@ -19,4 +19,19 @@ export class formController {
             next(new responseError(401, "gagal post data coba ulangi  lagi"));
         }
     }
+    static async dataTransaksi(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) {
+        try {
+            const data = await formService.datasTr();
+            res.status(201).json({ data: data, succes: true });
+        } catch (error) {
+          if (error instanceof ZodError) {
+                return next(error);
+            }
+            next(new responseError(401, "gagal post data coba ulangi  lagi"));
+        }
+    }
 }
