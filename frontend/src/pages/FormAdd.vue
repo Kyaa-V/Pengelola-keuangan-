@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { IsLoading } from "../hooks/IsLoading";
+import { useToast } from "vue-toast-notification";
+import "vue-toast-notification/dist/theme-sugar.css";
 import Input from "../components/input/Input.vue";
 import Modal from "../components/modal/Modal.vue";
 import Select from "../components/input/Select.vue";
@@ -20,6 +23,9 @@ interface IFormData {
     status: string;
 }
 
+const { isLoading, onLoading } = IsLoading();
+const toast = useToast();
+
 const formData = ref<IFormData>({
     name: "",
     modal: 0,
@@ -31,23 +37,48 @@ const formData = ref<IFormData>({
 });
 const errDataForm = ref({});
 
+const handleClick = () => {
+    formData.value.name = "";
+    formData.value.modal = 0;
+    formData.value.sell = 0;
+    formData.value.category = "";
+    formData.value.nameCustomer = "";
+    formData.value.status = "Pemasukan";
+};
+
 const handleSubmit = async e => {
     e.preventDefault();
+    onLoading();
     const data = await Fetch.post(formData.value, "/add-form-transaksi");
 
+    console.log(data.succes);
+
+    if (data.succes) {
+        onLoading();
+        handleClick();
+        console.log("berhasil");
+    }
+
     if (!data.succes) {
-        console.log("succes false:", data.errorData.errors);
-        const fieldError = data?.errorData?.errors.reduce((acc, curr) => {
+        console.error("Error response:", data);
+
+        const fieldError = data?.errorData?.errors?.reduce((acc, curr) => {
             acc[curr.path] = curr.message;
             return acc;
         }, {});
-        console.log(fieldError);
-        errDataForm.value = fieldError;
-    }
-};
 
-const handleClick = () => {
-    alert("tes");
+        console.error("Field error:", fieldError);
+
+        toast.error(data?.message || "Gagal mengirim data", {
+            position: "top"
+        });
+
+        onLoading(false);
+        if (errDataForm) {
+            errDataForm.value = fieldError || {};
+        }
+        return;
+    }
 };
 </script>
 <template>
@@ -131,18 +162,20 @@ const handleClick = () => {
                                     {{ errDataForm.modal }}
                                 </p>
                             </div>
-<div>                            <Input
-                                name="Jual"
-                                type="number"
-                                placeholder=" Jual"
-                                v-model:value="formData.sell"
-                            />
-                            <p
-                                v-if="errDataForm.sell"
-                                class="text-xs text-red-600 ml-3 mt-1"
-                            >
-                                {{ errDataForm.sell }}
-                            </p></div>
+                            <div>
+                                <Input
+                                    name="Jual"
+                                    type="number"
+                                    placeholder=" Jual"
+                                    v-model:value="formData.sell"
+                                />
+                                <p
+                                    v-if="errDataForm.sell"
+                                    class="text-xs text-red-600 ml-3 mt-1"
+                                >
+                                    {{ errDataForm.sell }}
+                                </p>
+                            </div>
                         </div>
                         <Select
                             name="Pilih Kategory"
@@ -179,15 +212,22 @@ const handleClick = () => {
                         />
                         <div class="flex gap-2 mt-2">
                             <Button
-                                styles="px-4 py-3 shadow rounded bg-lime-400 text-white text-bold"
-                                >Tambah</Button
+                                :isLoading="isLoading"
+                                :styles="[
+                                    'px-4 py-3 shadow rounded text-bold',
+                                    isLoading
+                                        ? 'bg-grey text-black'
+                                        : 'bg-lime-400 text-white '
+                                ]"
                             >
+                                {{ isLoading ? "Loading" : "Tambah" }}
+                            </Button>
                             <Button
                                 styles="px-4 py-3 shadow rounded bg-red-600 text-white
           text-bold"
                                 type="button"
                                 @clicked="handleClick"
-                                >Cancel</Button
+                                >Hapus</Button
                             >
                         </div>
                     </div>

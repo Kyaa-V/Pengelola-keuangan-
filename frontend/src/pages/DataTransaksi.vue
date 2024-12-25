@@ -1,21 +1,99 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import Navbar from "../components/navbar/Navbar.vue";
 import Modal from "../components/modal/Modal.vue";
 import Table from "../components/tabel/Table.vue";
+import { Fetch } from "../api/Fetch";
 
 const datas = [
     "Hari Ini",
     "Kemarin",
-    "2 Hari Yang Lalu",
     "Minggu ini",
     "Bulan Ini",
     "1 Bulan yang lalu"
 ];
+
 const daySelect = ref("");
-const handleClick = (data: string) => {
+
+const row = ref([]);
+
+const handleClick = async (data: string) => {
     daySelect.value = data;
+    try {
+        const today = new Date();
+        const startOfToday = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate()
+        );
+        const startOfThisWeek = new Date(startOfToday);
+        startOfThisWeek.setDate(startOfToday.getDate() - today.getDay());
+        const startOfThisMonth = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            1
+        );
+        const startOfLastMonth = new Date(
+            today.getFullYear(),
+            today.getMonth() - 1,
+            1
+        );
+        const endOfLastMonth = new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            0
+        );
+        console.log("Today:", today);
+        console.log("Start of Today:", startOfToday);
+        console.log("Start of This Week:", startOfThisWeek);
+        console.log("Start of This Month:", startOfThisMonth);
+        console.log("Start of Last Month:", startOfLastMonth);
+        console.log("End of Last Month:", endOfLastMonth);
+
+        console.log(datas);
+
+        const filteredData = datas.filter(item => {
+            const itemDate = new Date(item.at_created);
+
+            switch (data) {
+                case "Hari Ini":
+                    return itemDate >= startOfToday;
+                case "Kemarin":
+                    const startOfYesterday = new Date(startOfToday);
+                    startOfYesterday.setDate(startOfToday.getDate() - 1);
+                    return (
+                        itemDate >= startOfYesterday && itemDate < startOfToday
+                    );
+                case "Minggu ini":
+                    return itemDate >= startOfThisWeek;
+                case "Bulan Ini":
+                    return itemDate >= startOfThisMonth;
+                case "Bulan lalu":
+                    return (
+                        itemDate >= startOfLastMonth &&
+                        itemDate <= endOfLastMonth
+                    );
+                default:
+                    return true;
+            }
+        });
+
+        row.value = filteredData;
+    } catch (err) {
+        console.error(err);
+    }
 };
+
+onMounted(async () => {
+    try {
+        const dataRow = await Fetch.get("/data-transaksi");
+        console.log(dataRow);
+        console.log(dataRow.datas.data);
+        row.value = dataRow.datas.data;
+    } catch (err) {
+        console.error(err);
+    }
+});
 </script>
 
 <template>
@@ -64,10 +142,20 @@ const handleClick = (data: string) => {
                     <span>Rp.19.000</span>
                 </div>
             </div>
-            <div class="overflow-auto p-4 max-w-full flex flex-col">
-                <Table name="Transaksi Penjualan"
-                :column="['Name','Category','Harga','Jual']"/>
-
+            <div
+                class="overflow-auto px-4 pb-14 max-w-full flex flex-col max-h-max"
+            >
+                <Table
+                    name="Transaksi Penjualan"
+                    :rows="row"
+                    :column="[
+                        'Name',
+                        'Category',
+                        'Modal',
+                        'Jual',
+                        'Nama Penjual'
+                    ]"
+                />
             </div>
         </div>
     </Modal>

@@ -5,14 +5,14 @@ const { thema } = UseThema();
 
 defineProps({
     name: { type: String },
-    column: { type: Array as () => string[] },
-    rows: { type: Array as () => any[] }
+    column: { type: Array as () => string[], required: true },
+    rows: { required: true }
 });
 </script>
 
 <template>
     <table
-        class="w-full border-collapse border border-gray-300 overflow-y-auto no-scrollbar flex-1"
+        class="w-full border-collapse border border-gray-300 overflow-y-auto no-scrollbar flex-1 relative"
     >
         <thead>
             <tr :class="[thema === 'day' ? 'bg-gray-200' : 'bg-black']">
@@ -48,31 +48,36 @@ defineProps({
                 </td>
             </tr>
         </tbody>
+        <tfoot>
+            <tr>
+                <td :colspan="column.length" class="p-3">
+                    <div
+                        :class="[
+                            ' min-w-full flex items-center justify-end gap-2 '
+                        ]"
+                    >
+                        <span>per-page</span>
+                        <span>1</span>
+                        <box-icon
+                            name="arrow-to-left"
+                            :color="thema === 'day' ? '#000' : '#fff'"
+                        ></box-icon>
+                        <box-icon
+                            name="chevron-left"
+                            :color="thema === 'day' ? '#000' : '#fff'"
+                        ></box-icon>
+                        <span>1</span>
+                        <box-icon
+                            name="chevron-right"
+                            :color="thema === 'day' ? '#000' : '#fff'"
+                        ></box-icon>
+                        <box-icon
+                            name="arrow-to-right"
+                            :color="thema === 'day' ? '#000' : '#fff'"
+                        ></box-icon>
+                    </div>
+                </td>
+            </tr>
+        </tfoot>
     </table>
-    <div
-        :class="[
-            ' shadow min-w-full p-3 flex items-center justify-end  gap-2 border border-gray-300',
-            thema === 'day' ? 'bg-white' : 'bg-black'
-        ]"
-    >
-        <span>per-page</span>
-        <span>1</span>
-        <box-icon
-            name="arrow-to-left"
-            :color="thema === 'day' ? '#000' : '#fff'"
-        ></box-icon>
-        <box-icon
-            name="chevron-left"
-            :color="thema === 'day' ? '#000' : '#fff'"
-        ></box-icon>
-        <span>1</span>
-        <box-icon
-            name="chevron-right"
-            :color="thema === 'day' ? '#000' : '#fff'"
-        ></box-icon>
-        <box-icon
-            name="arrow-to-right"
-            :color="thema === 'day' ? '#000' : '#fff'"
-        ></box-icon>
-    </div>
 </template>
