@@ -5,6 +5,8 @@ import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
 import Input from "../components/input/Input.vue";
 import Modal from "../components/modal/Modal.vue";
+import Setor from "./components/formAdd/Setor.vue";
+import ModalAwal from "./components/formAdd/ModalAwal.vue";
 import Select from "../components/input/Select.vue";
 import InputRadio from "../components/input/InputRadio.vue";
 import Textarea from "../components/input/Textarea.vue";
@@ -103,49 +105,8 @@ const handleSubmit = async e => {
                         :nameCs="['Pemasukan', 'Modal', 'Setor']"
                         v-model:modelValue="formData.status"
                     />
-                    <div v-if="formData.status == 'Modal'">
-                        <Input
-                            name="Tambah Modal"
-                            type="number"
-                            placeholder=" Modal Hari ini"
-                            v-model:value="formData.modal"
-                        />
-
-                        <div class="flex gap-2 mt-2">
-                            <Button
-                                styles="px-4 py-3 shadow rounded bg-lime-400 text-white text-bold"
-                                >Tambah</Button
-                            >
-                            <Button
-                                styles="px-4 py-3 shadow rounded bg-red-600 text-white
-          text-bold"
-                                type="button"
-                                @clicked="handleClick"
-                                >Cancel</Button
-                            >
-                        </div>
-                    </div>
-                    <div v-if="formData.status == 'Setor'">
-                        <Input
-                            name="Setor"
-                            type="number"
-                            placeholder=" Setor Uang"
-                            v-model:value="formData.sell"
-                        />
-                        <div class="flex gap-2 mt-2">
-                            <Button
-                                styles="px-4 py-3 shadow rounded bg-lime-400 text-white text-bold"
-                                >Tambah</Button
-                            >
-                            <Button
-                                styles="px-4 py-3 shadow rounded bg-red-600 text-white
-          text-bold"
-                                type="button"
-                                @clicked="handleClick"
-                                >Cancel</Button
-                            >
-                        </div>
-                    </div>
+                    <ModalAwal :status="formData.status" />
+                    <Setor :status="formData.status" />
                     <div v-if="formData.status == 'Pemasukan'">
                         <div class="flex gap-2">
                             <div>

@@ -35,10 +35,46 @@ export class formService {
 
         return { data };
     }
-    static async datasTr() {
-        const query = "SELECT * FROM formData WHERE at_created >= DATE_SUB(CURDATE(), INTERVAL 2 MONTH)";
+    static async today() {
+        const query =
+            "SELECT * FROM formData WHERE DATE(at_created) = CURDATE()";
         const data = await queries.get(query);
         console.log(responseDataTable(data));
         return responseDataTable(data);
+    }
+    static async yesterday() {
+        const query =
+            "SELECT * FROM formData WHERE DATE(at_created) = CURDATE() - INTERVAL 1 DAY";
+        const data = await queries.get(query);
+        console.log(responseDataTable(data));
+        return responseDataTable(data);
+    }
+    static async inWeeks() {
+        const query =
+            "SELECT * FROM formData WHERE YEARWEEK(at_created, 1) = YEARWEEK(CURDATE(), 1)";
+        const data = await queries.get(query);
+        console.log(responseDataTable(data));
+        return responseDataTable(data);
+    }
+    static async inMonth() {
+        const query =
+            "SELECT * FROM formData WHERE MONTH(at_created) = MONTH(CURDATE()) AND YEAR(at_created) = YEAR(CURDATE())";
+        const data = await queries.get(query);
+        console.log(responseDataTable(data));
+        return responseDataTable(data);
+    }
+    static async lastMonth() {
+        const query =
+            "SELECT * FROM formData WHERE MONTH(at_created) = MONTH(CURDATE() - INTERVAL 1 MONTH)  AND YEAR(at_created) = YEAR(CURDATE() - INTERVAL 1 MONTH)";
+        const data = await queries.get(query);
+        console.log(responseDataTable(data));
+        return responseDataTable(data);
+    }
+    static async oneMonth() {
+        const query =
+            "SELECT DAY(at_created) AS tanggal,COUNT(*) AS jumlah_transaksi FROM formData WHERE MONTH(at_created) = MONTH(CURRENT_DATE()) AND YEAR(at_created) = YEAR(CURRENT_DATE()) GROUP BY tanggal ORDER BY tanggal ASC";
+        const data = await queries.get(query);
+        console.log(data);
+        return data;
     }
 }

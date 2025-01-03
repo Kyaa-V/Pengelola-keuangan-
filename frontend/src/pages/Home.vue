@@ -1,10 +1,43 @@
 <script setup lang="ts">
 import { UseThema } from "../hooks/UseThema.ts";
+import { IsLoading } from "../hooks/IsLoading";
+import { onMounted, ref } from "vue";
 import Modal from "../components/modal/Modal.vue";
+import { Fetch } from "../api/Fetch";
 import Table from "../components/tabel/Table.vue";
 import Chart from "../components/chart/Chart.vue";
 
 const { thema } = UseThema();
+const { isLoading, onLoading } = IsLoading();
+const dataChart = ref([]);
+const datasTableTransaction = ref([]);
+
+onMounted(async () => {
+    try {
+        const data = await Fetch.get("/one-month");
+        const daysInMonth = new Date(
+            new Date().getFullYear(),
+            new Date().getMonth() + 1,
+            0
+        ).getDate();
+
+        const transactions = Array(daysInMonth).fill(0);
+
+        const dataTransaction = data.datas.data;
+
+        await dataTransaction.forEach(item => {
+            transactions[item.tanggal - 1] = item.jumlah_transaksi;
+        });
+        console.log(transactions);
+        dataChart.value = transactions;
+        onLoading();
+        const dataTable = await Fetch.get("/today");
+        console.log(dataTable);
+        datasTableTransaction.value = dataTable.datas.data;
+    } catch (err) {
+        console.error(err);
+    }
+});
 </script>
 <template>
     <Modal>
@@ -38,23 +71,26 @@ const { thema } = UseThema();
         </div>
         <div
             :class="[
-                ' p-2 shadow-lg mb-3',
+                ' p-2 shadow-lg mb-3 overflow-auto px-4 pb-14 max-w-full flex   flex-col max-h-max',
                 thema === 'day' ? 'bg-white' : ' bg-black'
             ]"
         >
             <Table
                 name="Transaksi Penjualan Hari ini"
+                :rows="datasTableTransaction"
                 :column="['Name', 'Category', 'Harga', 'Jual']"
             />
         </div>
-        <div             :class="[
+        <div
+            :class="[
                 ' p-2 shadow-lg mb-3',
                 thema === 'day' ? 'bg-white' : ' bg-black'
-            ]">
+            ]"
+        >
             <div class="p-2 text-lg">
-                <span>Grafik Penjualan Bulan Desember</span>
+                <span>Grafik Penjualan Bulan January</span>
             </div>
-            <Chart />
+            <Chart v-if="isLoading" :datachart="dataChart" />
         </div>
     </Modal>
 </template>
