@@ -1,29 +1,48 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import Chart from "chart.js/auto";
 
+const props = defineProps({
+    datachart: {
+        type: Array as () => number[]
+    }
+});
+
+console.log(props.datachart);
+
 const DATA_COUNT = 31;
-const labels = [];
-for (let i = 1; i <= DATA_COUNT; ++i) {
-    labels.push(i.toString());
-}
-const datapoints = [0, 20, 20, 60, 60, 120, 150, 180, 120, 125, 105, 110, 170];
-const data = {
+const labels = Array.from({ length: DATA_COUNT }, (_, i) => (i + 1).toString());
+
+const datapoints = ref(Array(DATA_COUNT).fill(0));
+
+
+watch(
+    () => props.datachart,
+    newData => {
+        if (newData && Array.isArray(newData)) {
+            datapoints.value = newData;
+            
+        }
+    },
+    { immediate: true }
+);
+
+const data = ref({
     labels: labels,
     datasets: [
         {
-            label: "Transaksi Penjualan Bulan Desember",
-            data: datapoints,
+            label: "Transaksi Penjualan Bulan January",
+            data: datapoints.value,
             borderColor: "rgba(255, 99, 132, 1)",
             fill: false,
             tension: 0.4
         }
     ]
-};
+});
 
 const config = {
     type: "line",
-    data: data,
+    data: data.value,
     options: {
         responsive: false,
         maintainAspectRatio: false,
@@ -40,7 +59,7 @@ const config = {
             y: {
                 display: true,
                 suggestedMin: -10,
-                suggestedMax: 200
+                suggestedMax: 30
             }
         }
     }

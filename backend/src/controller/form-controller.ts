@@ -19,19 +19,70 @@ export class formController {
             next(new responseError(401, "gagal post data coba ulangi  lagi"));
         }
     }
-    static async dataTransaksi(
-        req: Request,
-        res: Response,
-        next: NextFunction
-    ) {
+    static async today(req: Request, res: Response, next: NextFunction) {
         try {
-            const data = await formService.datasTr();
+            const data = await formService.today();
             res.status(201).json({ data: data, succes: true });
         } catch (error) {
-          if (error instanceof ZodError) {
+            if (error instanceof ZodError) {
                 return next(error);
             }
-            next(new responseError(401, "gagal post data coba ulangi  lagi"));
+            next(new responseError(401, "gagal get data coba ulangi  lagi"));
+        }
+    }
+    static async yesterday(req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = await formService.yesterday();
+            res.status(201).json({ data: data, succes: true });
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return next(error);
+            }
+            next(new responseError(401, "gagal get data coba ulangi  lagi"));
+        }
+    }
+    static async inWeeks(req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = await formService.inWeeks();
+            res.status(201).json({ data: data, succes: true });
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return next(error);
+            }
+            next(new responseError(401, "gagal get data coba ulangi  lagi"));
+        }
+    }
+    static async inMonth(req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = await formService.inMonth();
+            res.status(201).json({ data: data, succes: true });
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return next(error);
+            }
+            next(new responseError(401, "gagal get data coba ulangi  lagi"));
+        }
+    }
+    static async lastMonth(req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = await formService.lastMonth();
+            res.status(201).json({ data: data, succes: true });
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return next(error);
+            }
+            next(new responseError(401, "gagal get data coba ulangi  lagi"));
+        }
+    }
+    static async oneMonth(req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = await formService.oneMonth();
+            res.status(201).json({ data: data, succes: true });
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return next(error);
+            }
+            next(new responseError(401, "gagal get data coba ulangi  lagi"));
         }
     }
 }
