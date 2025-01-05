@@ -140,6 +140,8 @@ const handleSubmit = async e => {
                         </div>
                         <Select
                             name="Pilih Kategory"
+                    defaults="Kategory"
+                            styles="my-2 max-w-full relative z-5 text-black"
                             v-model:modelValue="formData.category"
                             :items="[
                                 'Hp',

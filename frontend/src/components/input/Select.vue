@@ -3,18 +3,8 @@ import { ref, computed } from "vue";
 import { StoreModal } from "../../hooks/UseStoreModal.ts";
 import { UseThema } from "../../hooks/UseThema.ts";
 
-defineProps({
-    items: {
-        type: Array,
-        require: true
-    },
-    name: {
-        type: String
-    },
-    modelValue: {
-        type: String
-    }
-});
+defineProps(["items", "name", "modelValue", "styles", "defaults"]);
+
 const emit = defineEmits(["update:modelValue"]);
 const category = ref("");
 const { isOpen, onOpen } = StoreModal();
@@ -27,7 +17,7 @@ const selectCategory = (item: string) => {
 };
 </script>
 <template>
-    <div class="my-2 max-w-full relative z-5 text-black">
+    <div :class="styles">
         <span
             :class="[
                 'text-semibold mb-1',
@@ -35,14 +25,14 @@ const selectCategory = (item: string) => {
             ]"
             >{{ name }}</span
         >
-        <div class="bg-white">
+        <div class="bg-white max-h-full">
             <div
                 class="flex justify-between border px-3 py-2 shadow-lg"
                 @click="onOpen"
             >
                 <span
-                    :class="[thema === 'day' ? ' text-black' : ' text-white']"
-                    >{{ category || "Pilih kategory" }}</span
+                    :class="[, thema === 'day' ? ' text-black' : ' text-white']"
+                    >{{ category || defaults }}</span
                 >
                 <box-icon :name="iconName"></box-icon>
             </div>
