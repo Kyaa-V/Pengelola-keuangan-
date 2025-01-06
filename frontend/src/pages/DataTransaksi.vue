@@ -5,6 +5,7 @@ import Modal from "../components/modal/Modal.vue";
 import Table from "../components/tabel/Table.vue";
 import Button from "../components/button/Button.vue";
 import Select from "../components/input/Select.vue";
+import InputRadio from "../components/input/InputRadio.vue";
 import { Fetch } from "../api/Fetch";
 
 interface IDays {
@@ -37,6 +38,10 @@ const months = [
 ];
 
 const daySelect = ref("");
+const row = ref([]);
+const statusSelect = ref("Date");
+const dataCategory = ref("");
+
 const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
 console.log(days);
 
@@ -49,12 +54,54 @@ const years = Array.from({ length: currentYear - startYear + 1 }, (_, i) =>
 
 console.log(years);
 
-const row = ref([]);
 const date = ref<IDays>({
     day: "0",
     month: "0",
     year: "0"
 });
+
+const handleSubmit = async () => {
+    const selectDate = `${date.value.year}-${date.value.month}-${date.value.day}`;
+    console.log(selectDate);
+    try {
+        const response = await Fetch.post(
+            { date: selectDate },
+            "/select-date-table"
+        );
+        console.log(response.datas.data);
+
+        row.value = response.datas.data;
+    } catch (err) {
+        console.error(err);
+    }
+};
+const handleSubmitCategory = async () => {
+    try {
+        const response = await Fetch.post(
+            { dataCategory: dataCategory.value },
+            "/select-data-category"
+        );
+        console.log(response.datas.data);
+
+        row.value = response.datas.data;
+    } catch (err) {
+        console.error(err);
+    }
+};
+
+const prosesResponseCategory = ({ item, index }) => {
+    dataCategory.value = item;
+};
+const prosesResponseDay = ({ item, index }) => {
+    date.value.day = item;
+};
+const prosesResponseMonth = ({ item, index }) => {
+    const total = index + 1;
+    date.value.month = total.toString();
+};
+const prosesResponseYear = ({ item, index }) => {
+    date.value.year = item;
+};
 
 const handleClick = async (data: string) => {
     daySelect.value = data;
@@ -125,29 +172,58 @@ onMounted(async () => {
                 </div>
             </div>
 
+            <div>
+                <InputRadio
+                    name="Select"
+                    :nameCs="['Date', 'Category']"
+                    v-model:modelValue="statusSelect"
+                />
+            </div>
+
             <div
                 class="flex max-w-screen-sm gap-2 relative flex-wrap justify-center"
+                v-if="statusSelect == 'Date'"
             >
                 <Select
                     :items="days"
-                    v-model:modelValue="date.days"
+                    @update:modelValue="prosesResponseDay"
                     name="Tanggal"
                     defaults="0"
                     styles="max-h-full"
                 />
                 <Select
                     :items="months"
-                    v-model:modelValue="date.month"
+                    @update:modelValue="prosesResponseMonth"
                     name="Bulan"
                     defaults="Bulan"
                 />
                 <Select
                     :items="years"
-                    v-model:modelValue="date.year"
+                    @update:modelValue="prosesResponseYear"
                     name="Tahun"
                     defaults="Tahun"
                 />
                 <Button
+                    type="button"
+                    @clicked="handleSubmit"
+                    styles="py-1 mx-4 w-full shadow rounded bg-red-600
+                    text-white flex justify-center items-center
+          text-bold"
+                    >Search</Button
+                >
+            </div>
+
+            <div v-if="statusSelect == 'Category'">
+                <Select
+                    :items="['Hp', 'Kartu', 'Service', 'Kuota', 'E-wallet']"
+                    name="Pilih Kategory"
+                    defaults="Kategory"
+                    styles="my-2 mx-3 max-w-full relative z-5 text-black"
+                    @update:modelValue="prosesResponseCategory"
+                />
+                <Button
+                    type="button"
+                    @clicked="handleSubmitCategory"
                     styles="py-1 mx-4 w-full shadow rounded bg-red-600
                     text-white flex justify-center items-center
           text-bold"
@@ -179,6 +255,7 @@ onMounted(async () => {
                 class="overflow-auto px-4 pb-14 max-w-full flex flex-col max-h-max"
             >
                 <Table
+                    v-if="row && row.length > 0"
                     name="Transaksi Penjualan"
                     :rows="row"
                     :column="[
@@ -189,6 +266,7 @@ onMounted(async () => {
                         'Nama Penjual'
                     ]"
                 />
+                <div v-else>Tidak ada transaksi.</div>
             </div>
         </div>
     </Modal>

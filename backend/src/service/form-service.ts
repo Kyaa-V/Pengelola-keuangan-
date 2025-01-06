@@ -1,4 +1,4 @@
-import { AddForm } from "../model/modelAddForm";
+import { AddForm, SelectDate, SelectDataCategory } from "../model/modelAddForm";
 import { Schema } from "../validations/schemaZod";
 import { responseDataTable } from "../model/responseTabel";
 import { queries } from "../query/queries";
@@ -34,6 +34,30 @@ export class formService {
         console.log(data);
 
         return { data };
+    }
+    static async select(request: SelectDate) {
+        const { date }: SelectDate = request;
+
+        console.log("testing 3");
+        const query = `
+        SELECT * FROM formData WHERE DATE(at_created) =  ?`;
+        const data = await queries.post(query, [date]);
+        console.log("testing selesai");
+        console.log(data);
+
+        return responseDataTable(data);
+    }
+    static async selectCategory(request: SelectDataCategory) {
+        const { dataCategory }: SelectDataCategory = request;
+
+        console.log(dataCategory);
+        console.log("testing 3");
+        const query = `SELECT * FROM formData WHERE category =  ?`;
+        const data = await queries.post(query, [dataCategory]);
+        console.log("testing selesai");
+        console.log(data);
+
+        return responseDataTable(data);
     }
     static async today() {
         const query =

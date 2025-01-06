@@ -7,3 +7,9 @@ export interface AddForm {
     status: string;
     information?: string;
 }
+export interface SelectDate {
+    date: string;
+}
+export interface SelectDataCategory {
+    dataCategory: string;
+}
