@@ -6,6 +6,9 @@ import Table from "../components/tabel/Table.vue";
 import Button from "../components/button/Button.vue";
 import Select from "../components/input/Select.vue";
 import InputRadio from "../components/input/InputRadio.vue";
+import SelectDate from "./components/dataTransaksi/SelectDate.vue";
+import SelectCustom from "./components/dataTransaksi/SelectCustom.vue";
+import SelectCategory from "./components/dataTransaksi/SelectCategory.vue";
 import { Fetch } from "../api/Fetch";
 
 interface IDays {
@@ -40,67 +43,18 @@ const months = [
 const daySelect = ref("");
 const row = ref([]);
 const statusSelect = ref("Date");
-const dataCategory = ref("");
 
-const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString());
-console.log(days);
-
-const startYear = 2020;
-const currentYear = new Date().getFullYear();
-
-const years = Array.from({ length: currentYear - startYear + 1 }, (_, i) =>
-    (startYear + i).toString()
-);
-
-console.log(years);
-
-const date = ref<IDays>({
-    day: "0",
-    month: "0",
-    year: "0"
-});
-
-const handleSubmit = async () => {
-    const selectDate = `${date.value.year}-${date.value.month}-${date.value.day}`;
-    console.log(selectDate);
-    try {
-        const response = await Fetch.post(
-            { date: selectDate },
-            "/select-date-table"
-        );
-        console.log(response.datas.data);
-
-        row.value = response.datas.data;
-    } catch (err) {
-        console.error(err);
-    }
+const handleRows = item => {
+    console.log("item:", item);
+    row.value = item;
 };
-const handleSubmitCategory = async () => {
-    try {
-        const response = await Fetch.post(
-            { dataCategory: dataCategory.value },
-            "/select-data-category"
-        );
-        console.log(response.datas.data);
-
-        row.value = response.datas.data;
-    } catch (err) {
-        console.error(err);
-    }
+const handleSelectDate = item => {
+    console.log("item:", item);
+    row.value = item;
 };
-
-const prosesResponseCategory = ({ item, index }) => {
-    dataCategory.value = item;
-};
-const prosesResponseDay = ({ item, index }) => {
-    date.value.day = item;
-};
-const prosesResponseMonth = ({ item, index }) => {
-    const total = index + 1;
-    date.value.month = total.toString();
-};
-const prosesResponseYear = ({ item, index }) => {
-    date.value.year = item;
+const handleCustom = item => {
+    console.log("item:", item);
+    row.value = item;
 };
 
 const handleClick = async (data: string) => {
@@ -175,61 +129,24 @@ onMounted(async () => {
             <div>
                 <InputRadio
                     name="Select"
-                    :nameCs="['Date', 'Category']"
+                    :nameCs="['Date', 'Category', 'Custom']"
                     v-model:modelValue="statusSelect"
                 />
             </div>
 
-            <div
-                class="flex max-w-screen-sm gap-2 relative flex-wrap justify-center"
-                v-if="statusSelect == 'Date'"
-            >
-                <Select
-                    :items="days"
-                    @update:modelValue="prosesResponseDay"
-                    name="Tanggal"
-                    defaults="0"
-                    styles="max-h-full"
-                />
-                <Select
-                    :items="months"
-                    @update:modelValue="prosesResponseMonth"
-                    name="Bulan"
-                    defaults="Bulan"
-                />
-                <Select
-                    :items="years"
-                    @update:modelValue="prosesResponseYear"
-                    name="Tahun"
-                    defaults="Tahun"
-                />
-                <Button
-                    type="button"
-                    @clicked="handleSubmit"
-                    styles="py-1 mx-4 w-full shadow rounded bg-red-600
-                    text-white flex justify-center items-center
-          text-bold"
-                    >Search</Button
-                >
-            </div>
+            <SelectDate
+                :status="statusSelect"
+                @update:modelValue="handleSelectDate"
+            />
 
-            <div v-if="statusSelect == 'Category'">
-                <Select
-                    :items="['Hp', 'Kartu', 'Service', 'Kuota', 'E-wallet']"
-                    name="Pilih Kategory"
-                    defaults="Kategory"
-                    styles="my-2 mx-3 max-w-full relative z-5 text-black"
-                    @update:modelValue="prosesResponseCategory"
-                />
-                <Button
-                    type="button"
-                    @clicked="handleSubmitCategory"
-                    styles="py-1 mx-4 w-full shadow rounded bg-red-600
-                    text-white flex justify-center items-center
-          text-bold"
-                    >Search</Button
-                >
-            </div>
+            <SelectCategory
+                :status="statusSelect"
+                @update:modelValue="handleRows"
+            />
+            <SelectCustom
+                :status="statusSelect"
+                @update:modelValue="handleCustom"
+            />
 
             <div class="flex gap-1 m-2 max-w-full">
                 <div

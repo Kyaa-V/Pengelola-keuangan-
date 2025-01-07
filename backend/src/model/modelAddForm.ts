@@ -10,6 +10,10 @@ export interface AddForm {
 export interface SelectDate {
     date: string;
 }
+export interface SelectCustom {
+    date: string;
+    category:string
+}
 export interface SelectDataCategory {
     dataCategory: string;
 }

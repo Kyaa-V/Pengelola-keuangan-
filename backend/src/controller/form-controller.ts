@@ -1,6 +1,11 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
-import { AddForm ,SelectDate,SelectDataCategory} from "../model/modelAddForm";
+import {
+    AddForm,
+    SelectDate,
+    SelectDataCategory,
+    SelectCustom
+} from "../model/modelAddForm";
 import { responseError } from "../error/response-error";
 import { formService } from "../service/form-service";
 
@@ -33,7 +38,25 @@ export class formController {
             next(new responseError(401, "gagal post data coba ulangi  lagi"));
         }
     }
-    static async selectCategory(req: Request, res: Response, next: NextFunction) {
+    static async selectCustom(req: Request, res: Response, next: NextFunction) {
+        try {
+            console.log(req.body);
+            const request: SelectCustom = req.body;
+            console.log("start");
+            const data = await formService.selectcustom(request);
+            res.status(201).json({ data: data });
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return next(error);
+            }
+            next(new responseError(401, "gagal post data coba ulangi  lagi"));
+        }
+    }
+    static async selectCategory(
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ) {
         try {
             console.log(req.body);
             const request: SelectDataCategory = req.body;
