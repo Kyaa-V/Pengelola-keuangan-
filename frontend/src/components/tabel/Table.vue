@@ -5,7 +5,7 @@ import { UseThema } from "../../hooks/UseThema.ts";
 const props = defineProps({
     name: { type: String, required: true },
     column: { type: Array as () => string[], required: true },
-    rows: { type: Array as () => Record<string, any>[] },
+    rows: { required: true },
     rowsPerPage: { type: Number, default: 10 }
 });
 
@@ -13,6 +13,10 @@ const { thema } = UseThema();
 
 const currentPage = ref(0);
 const count = ref(1);
+
+const totalPages = computed(() =>
+    Math.ceil(props.rows.length / props.rowsPerPage)
+);
 
 const paginatedRows = computed(() => {
     const start = currentPage.value * props.rowsPerPage;
@@ -33,15 +37,15 @@ const goToPreviousPage = () => {
 };
 
 const goToNextPage = () => {
-    if ((currentPage.value + 1) * props.rowsPerPage < props.rows.length) {
+    if (currentPage.value + 1 < totalPages.value) {
         currentPage.value++;
         count.value++;
     }
 };
 
 const goToLastPage = () => {
-    currentPage.value = Math.ceil(props.rows.length / props.rowsPerPage) - 1;
-    count.value = Math.ceil(props.rows.length / props.rowsPerPage);
+    currentPage.value = totalPages.value - 1;
+    count.value = totalPages.value;
 };
 </script>
 
@@ -60,7 +64,7 @@ const goToLastPage = () => {
                     </th>
                 </tr>
                 <tr>
-                    <th>id</th>
+                    <th class="border border-gray-300 p-2 text-center">id</th>
                     <th
                         v-for="(col, index) in props.column"
                         :key="index"
@@ -90,35 +94,57 @@ const goToLastPage = () => {
             </tbody>
             <tfoot>
                 <tr>
-                    <td :colspan="props.column.length" class="p-3">
+                    <td :colspan="props.column.length + 1" class="p-3">
                         <div
                             class="min-w-full flex items-center justify-end gap-2"
                         >
                             <div class="flex items-center justify-center">
-                                <span>Per Page: {{ count }}</span>
+                                <span
+                                    >Page {{ currentPage + 1 }} of
+                                    {{ totalPages }}</span
+                                >
                             </div>
-                            <div class="flex items-center justify-center">
+                            <div class="flex items-center justify-center gap-2">
                                 <box-icon
                                     name="arrow-to-left"
                                     @click="goToFirstPage"
                                     :color="thema === 'day' ? '#000' : '#fff'"
+                                    :class="{
+                                        'cursor-pointer': currentPage > 0,
+                                        'opacity-50': currentPage === 0
+                                    }"
                                 ></box-icon>
                                 <box-icon
                                     name="chevron-left"
                                     @click="goToPreviousPage"
                                     :color="thema === 'day' ? '#000' : '#fff'"
+                                    :class="{
+                                        'cursor-pointer': currentPage > 0,
+                                        'opacity-50': currentPage === 0
+                                    }"
                                 ></box-icon>
                                 <span>{{ currentPage + 1 }}</span>
                                 <box-icon
                                     name="chevron-right"
                                     @click="goToNextPage"
                                     :color="thema === 'day' ? '#000' : '#fff'"
+                                    :class="{
+                                        'cursor-pointer':
+                                            currentPage + 1 < totalPages,
+                                        'opacity-50':
+                                            currentPage + 1 >= totalPages
+                                    }"
                                 ></box-icon>
                                 <box-icon
                                     name="arrow-to-right"
-                                    v-if="row.length <= rowsPerPage"
                                     @click="goToLastPage"
                                     :color="thema === 'day' ? '#000' : '#fff'"
+                                    :class="{
+                                        'cursor-pointer':
+                                            currentPage + 1 < totalPages,
+                                        'opacity-50':
+                                            currentPage + 1 >= totalPages
+                                    }"
                                 ></box-icon>
                             </div>
                         </div>

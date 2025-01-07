@@ -4,6 +4,9 @@ import { formController } from "../controller/form-controller";
 export const publicRouter = express.Router();
 
 publicRouter.post("/add-form-transaksi", formController.addForm);
+publicRouter.post("/select-date-table", formController.selectData);
+publicRouter.post("/select-custom-table", formController.selectCustom);
+publicRouter.post("/select-data-category", formController.selectCategory);
 publicRouter.get("/today", formController.today);
 publicRouter.get("/yesterday", formController.yesterday);
 publicRouter.get("/in-weeks", formController.inWeeks);
