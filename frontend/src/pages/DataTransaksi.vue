@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import Navbar from "../components/navbar/Navbar.vue";
 import Modal from "../components/modal/Modal.vue";
 import Table from "../components/tabel/Table.vue";
@@ -44,17 +44,52 @@ const daySelect = ref("");
 const row = ref([]);
 const statusSelect = ref("Date");
 
+const totalModal = computed(() =>
+    row.value.reduce((total, item) => total + Number(item.Modal || 0), 0)
+);
+
+const totalSell = computed(() =>
+    row.value.reduce((total, item) => total + Number(item.Jual || 0), 0)
+);
+
+const totalAll = computed(() => totalSell.value - totalModal.value);
+
+const formatCurrency = price => {
+    return Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR"
+    }).format(price);
+};
+
 const handleRows = item => {
-    console.log("item:", item);
-    row.value = item;
+    const formattedItems = item.map(item => ({
+        ...item,
+        Modal: `${item.Modal.toLocaleString("id-ID")}`,
+        Jual: `${item.Jual.toLocaleString("id-ID")}`
+    }));
+
+    console.log(formattedItems);
+    row.value = formattedItems;
 };
 const handleSelectDate = item => {
-    console.log("item:", item);
-    row.value = item;
+    const formattedItems = item.map(item => ({
+        ...item,
+        Modal: `${item.Modal.toLocaleString("id-ID")}`,
+        Jual: `${item.Jual.toLocaleString("id-ID")}`
+    }));
+
+    console.log(formattedItems);
+    row.value = formattedItems;
 };
 const handleCustom = item => {
-    console.log("item:", item);
-    row.value = item;
+    const formattedItems = item.map(item => ({
+        ...item,
+        Modal: `${item.Modal.toLocaleString("id-ID")}`,
+        Jual: `${item.Jual.toLocaleString("id-ID")}`
+    }));
+
+    console.log(formattedItems);
+    row.value = formattedItems;
 };
 
 const handleClick = async (data: string) => {
@@ -81,7 +116,16 @@ const handleClick = async (data: string) => {
                 console.warn("Data tidak dikenali.");
                 return;
         }
-        row.value = dataRows.datas.data;
+
+        const formattedItems = dataRows.datas.data.map(item => ({
+            ...item,
+            Modal: `${item.Modal.toLocaleString("id-ID")}`,
+            Jual: `${item.Jual.toLocaleString("id-ID")}`
+        }));
+
+        console.log(formattedItems);
+
+        row.value = formattedItems;
     } catch (err) {
         console.error(err);
     }
@@ -92,7 +136,14 @@ onMounted(async () => {
         const dataRow = await Fetch.get("/today");
         console.log(dataRow);
         console.log(dataRow.datas.data);
-        row.value = dataRow.datas.data;
+        const formattedItems = dataRows.datas.data.map(item => ({
+            ...item,
+            Modal: `${item.Modal.toLocaleString("id-ID")}`,
+            Jual: `${item.Jual.toLocaleString("id-ID")}`
+        }));
+
+        console.log(formattedItems);
+        row.value = formattedItems;
     } catch (err) {
         console.error(err);
     }
@@ -156,16 +207,16 @@ onMounted(async () => {
                     <span>Rp.19.000</span>
                 </div>
                 <div
-                    class="flex-1 px-4 py-2 shadow text-white text-xs bg-yellow-500 flex flex-col items-center justify-center gap-1 rounded font-bold"
+                    class="flex-1 px-4 py-2 shadow text-white text-xs bg-yellow-500 flex flex-col items-center justify-center gap-1 text-center rounded font-bold"
                 >
-                    <span>Transaksi </span>
-                    <span>Rp.19.000</span>
+                    <span>Jumlah Transaksi </span>
+                    <span>{{ row.length || 0 }}</span>
                 </div>
                 <div
                     class="flex-1 px-4 py-2 bg-green-500 text-white text-xs flex flex-col items-center justify-center gap-1 shadow rounded font-bold"
                 >
-                    <span>Keuntungan</span>
-                    <span>Rp.19.000</span>
+                    <span>Pengeluaran</span>
+                    <span>Rp.0</span>
                 </div>
             </div>
             <div
@@ -184,6 +235,27 @@ onMounted(async () => {
                     ]"
                 />
                 <div v-else>Tidak ada transaksi.</div>
+            </div>
+            <div v-if="row.length">
+                <div class="mt-3 ml-4 border-b-2">
+                    <span class="font-bold">Total </span>
+                    <span>= Total Modal - Total Jual</span>
+                    <div class="flex gap-2">
+                        <span>Modal =</span>
+                        <span>{{ formatCurrency(totalModal) }}</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <span>Jual =</span>
+                        <span>{{ formatCurrency(totalSell) }}</span>
+                    </div>
+                    <div class="flex items-end justify-end pr-3 w-full">
+                        <box-icon name="minus"></box-icon>
+                    </div>
+                </div>
+                <div class="ml-4 flex gap-2">
+                    <span class="font-bold">Total</span>
+                    <span>: {{ formatCurrency(totalAll) }}</span>
+                </div>
             </div>
         </div>
     </Modal>

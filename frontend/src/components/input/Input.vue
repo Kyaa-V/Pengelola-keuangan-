@@ -17,13 +17,6 @@ defineProps({
 });
 defineEmits(["update:value"]);
 
-const formatPrice = price => {
-    return Intl.NumberFormat("id-ID", {
-        style: "currency",
-        currency: "IDR"
-    }).format(price);
-};
-
 const { thema, changeThema } = UseThema();
 </script>
 <template>
@@ -44,7 +37,7 @@ const { thema, changeThema } = UseThema();
                     $emit(
                         'update:value',
                         type == 'number'
-                            ? parseFloat(formatPrice($event.target.value)) || 0
+                            ? parseFloat($event.target.value)|| 0
                             : $event.target.value
                     )
                 "
