@@ -6,6 +6,7 @@ import "vue-toast-notification/dist/theme-sugar.css";
 import Input from "../components/input/Input.vue";
 import Modal from "../components/modal/Modal.vue";
 import Setor from "./components/formAdd/Setor.vue";
+import Hutang from "./components/formAdd/Hutang.vue";
 import ModalAwal from "./components/formAdd/ModalAwal.vue";
 import Select from "../components/input/Select.vue";
 import InputRadio from "../components/input/InputRadio.vue";
@@ -49,7 +50,7 @@ const handleClick = () => {
 };
 
 const prosesResponseCategory = ({ item, index }) => {
-    formData.value.category = item
+    formData.value.category = item;
 };
 
 const handleSubmit = async e => {
@@ -62,6 +63,9 @@ const handleSubmit = async e => {
     if (data.succes) {
         onLoading();
         handleClick();
+        toast.success("berhasil kirim data", {
+            position: "top"
+        });
         console.log("berhasil");
     }
 
@@ -94,8 +98,8 @@ const handleSubmit = async e => {
             <div class="mt-3 px-5">
                 <form @submit="handleSubmit">
                     <Input
-                        name="Nama Barang"
-                        placeholder="Masukkan Nama Barang"
+                        name="Transkasi"
+                        placeholder="Transaksi"
                         v-model:value="formData.name"
                     />
                     <p
@@ -106,11 +110,12 @@ const handleSubmit = async e => {
                     </p>
                     <InputRadio
                         name="status"
-                        :nameCs="['Pemasukan', 'Modal', 'Setor']"
+                        :nameCs="['Pemasukan', 'Modal', 'Setor', 'Hutang']"
                         v-model:modelValue="formData.status"
                     />
                     <ModalAwal :status="formData.status" />
                     <Setor :status="formData.status" />
+                    <Hutang :status="formData.status" :object="formData.name" />
                     <div v-if="formData.status == 'Pemasukan'">
                         <div class="flex gap-2">
                             <div>

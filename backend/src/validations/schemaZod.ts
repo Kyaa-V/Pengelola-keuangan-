@@ -1,7 +1,12 @@
 import { z, ZodSchema } from "zod";
-import { AddForm } from "../model/modelAddForm";
+import { AddForm, Hutang } from "../model/modelAddForm";
 
 export class Schema {
+    static readonly hutang: ZodSchema<Hutang> = z.object({
+        name: z.string().nonempty("Name tidak boleh kosong"),
+        mount: z.number().min(1, "Modal tidak boleh kosong"),
+        object:z.string().nonempty("Name tidak boleh kosong"),
+    });
     static readonly addForm: ZodSchema<AddForm> = z.object({
         name: z.string().nonempty("Name tidak boleh kosong"),
         modal: z.number().min(1, "Modal tidak boleh kosong"),

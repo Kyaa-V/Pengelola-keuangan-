@@ -40,7 +40,7 @@ const months = [
     "Desember"
 ];
 
-const daySelect = ref("");
+const daySelect = ref("Hari Ini");
 const row = ref([]);
 const statusSelect = ref("Date");
 
@@ -130,24 +130,31 @@ const handleClick = async (data: string) => {
         console.error(err);
     }
 };
-
 onMounted(async () => {
     try {
         const dataRow = await Fetch.get("/today");
         console.log(dataRow);
-        console.log(dataRow.datas.data);
-        const formattedItems = dataRows.datas.data.map(item => ({
+
+        if (!dataRow || !dataRow.datas || !dataRow.datas.data) {
+            console.warn("Data is not available or invalid");
+            return;
+        }
+
+        const formattedItems = dataRow.datas.data.map(item => ({
             ...item,
             Modal: `${item.Modal.toLocaleString("id-ID")}`,
             Jual: `${item.Jual.toLocaleString("id-ID")}`
         }));
 
         console.log(formattedItems);
+
         row.value = formattedItems;
     } catch (err) {
-        console.error(err);
+        console.error("Error fetching data:", err);
     }
 });
+
+
 </script>
 
 <template>

@@ -4,12 +4,42 @@ import {
     AddForm,
     SelectDate,
     SelectDataCategory,
-    SelectCustom
+    SelectCustom,
+    Hutang ,
+    UpdateHutang
 } from "../model/modelAddForm";
 import { responseError } from "../error/response-error";
 import { formService } from "../service/form-service";
 
 export class formController {
+    static async updateHutang(req: Request, res: Response, next: NextFunction) {
+        try {
+            console.log(req.body);
+            const request: UpdateHutang = req.body as UpdateHutang;
+            console.log("start");
+            const data = await formService.updatehutang(request);
+            res.status(201).json({ data: data });
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return next(error);
+            }
+            next(new responseError(401, "gagal post data coba ulangi  lagi"));
+        }
+    }
+    static async hutang(req: Request, res: Response, next: NextFunction) {
+        try {
+            console.log(req.body);
+            const request: Hutang = req.body as Hutang;
+            console.log("start");
+            const data = await formService.hutang(request);
+            res.status(201).json({ data: data });
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return next(error);
+            }
+            next(new responseError(401, "gagal post data coba ulangi  lagi"));
+        }
+    }
     static async addForm(req: Request, res: Response, next: NextFunction) {
         try {
             console.log(req.body);
@@ -128,6 +158,28 @@ export class formController {
     static async oneMonth(req: Request, res: Response, next: NextFunction) {
         try {
             const data = await formService.oneMonth();
+            res.status(201).json({ data: data, succes: true });
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return next(error);
+            }
+            next(new responseError(401, "gagal get data coba ulangi  lagi"));
+        }
+    }
+    static async getHutang(req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = await formService.gethutang();
+            res.status(201).json({ data: data, succes: true });
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return next(error);
+            }
+            next(new responseError(401, "gagal get data coba ulangi  lagi"));
+        }
+    }
+    static async getHutangLunas(req: Request, res: Response, next: NextFunction) {
+        try {
+            const data = await formService.gethutanglunas();
             res.status(201).json({ data: data, succes: true });
         } catch (error) {
             if (error instanceof ZodError) {
