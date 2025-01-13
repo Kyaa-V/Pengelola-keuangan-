@@ -12,8 +12,17 @@ export interface SelectDate {
 }
 export interface SelectCustom {
     date: string;
-    category:string
+    category: string;
 }
 export interface SelectDataCategory {
     dataCategory: string;
+}
+export interface Hutang {
+    name: string;
+    mount: number;
+    object: string;
+}
+export interface UpdateHutang {
+    id: string;
+    status: number;
 }

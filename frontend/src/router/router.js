@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import FormAdd from "../pages/FormAdd.vue";
 import DataTransaksi from "../pages/DataTransaksi.vue";
 import Home from "../pages/Home.vue";
+import Hutang from "../pages/Hutang.vue";
 
 const routes = [
     {
@@ -32,7 +33,7 @@ const routes = [
     {
         path: "/Hutang",
         name: "Hutang",
-        component: Home
+        component: Hutang
     }
 ];
 

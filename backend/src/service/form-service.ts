@@ -2,15 +2,47 @@ import {
     AddForm,
     SelectDate,
     SelectDataCategory,
-    SelectCustom
+    SelectCustom,
+    Hutang,
+    UpdateHutang
 } from "../model/modelAddForm";
 import { Schema } from "../validations/schemaZod";
 import { responseDataTable } from "../model/responseTabel";
 import { queries } from "../query/queries";
-import { uuid } from "../application/uuid";
+import { v4 as uuidv4 } from "uuid";
 import { VALIDATION } from "../validations/validations";
 
 export class formService {
+    static async updatehutang(request: UpdateHutang) {
+        console.log("proses 1");
+        const { id, status }: UpdateHutang = request;
+        console.log("testing 3");
+        const query = "UPDATE hutang SET Status = ? WHERE Id = ?";
+        const data = await queries.post(query, [status, id]);
+
+        console.log("testing selesai");
+        console.log(data);
+
+        return { data };
+    }
+    static async hutang(request: Hutang) {
+        console.log("proses 1");
+        const { name, mount, object }: Hutang = VALIDATION.validate(
+            Schema.hutang,
+            request
+        );
+        console.log("testing 3");
+        const newUuid = uuidv4();
+        console.log(newUuid);
+        const query =
+            "INSERT INTO hutang(Id,Transaksi,Name,Hutang) VALUES(?,?,?,?)";
+        const data = await queries.post(query, [newUuid, object, name, mount]);
+
+        console.log("testing selesai");
+        console.log(data);
+
+        return { data };
+    }
     static async add(request: AddForm) {
         console.log("proses 1");
         const {
@@ -22,11 +54,12 @@ export class formService {
             information
         }: AddForm = VALIDATION.validate(Schema.addForm, request);
         console.log("testing 3");
-        console.log(uuid);
+        const newUuid = uuidv4();
+        console.log(newUuid);
         const query =
             "INSERT INTO formData(id,name,category,modal,jual,information,nameCs) VALUES(?,?,?,?,?,?,?)";
         const data = await queries.post(query, [
-            uuid,
+            newUuid,
             name,
             category,
             modal,
@@ -58,7 +91,7 @@ export class formService {
         console.log("testing 3");
         const query = ` SELECT * FROM formData WHERE category = ? AND
         DATE(at_created) = ?`;
-        const data = await queries.post(query, [category,date]);
+        const data = await queries.post(query, [category, date]);
         console.log("testing selesai");
         console.log(data);
 
@@ -114,6 +147,20 @@ export class formService {
     static async oneMonth() {
         const query =
             "SELECT DAY(at_created) AS tanggal,COUNT(*) AS jumlah_transaksi FROM formData WHERE MONTH(at_created) = MONTH(CURRENT_DATE()) AND YEAR(at_created) = YEAR(CURRENT_DATE()) GROUP BY tanggal ORDER BY tanggal ASC";
+        const data = await queries.get(query);
+        console.log(data);
+        return data;
+    }
+    static async gethutang() {
+        const query =
+            "SELECT Id, Transaksi, Name, Hutang, Status,DATE_FORMAT(Date, '%Y-%m-%d') AS date FROM hutang WHERE Status = 'Belum lunas'";
+        const data = await queries.get(query);
+        console.log(data);
+        return data;
+    }
+    static async gethutanglunas() {
+        const query =
+            "SELECT Id, Transaksi, Name, Hutang, Status,DATE_FORMAT(Date, '%Y-%m-%d') AS date FROM hutang WHERE Status = 'Lunas'";
         const data = await queries.get(query);
         console.log(data);
         return data;
