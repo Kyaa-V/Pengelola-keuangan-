@@ -25,11 +25,12 @@ const fetchMounted = async () => {
 const prosesResponseHutang = async ({ item, keys }) => {
     try {
         console.log("Status:", item);
+        console.log("id:", keys);
         const response = await Fetch.update("/update-hutang-status", {
             id: keys,
             status: item
         });
-        if (response.success) {
+        if (response.succes) {
             fetchMounted();
         }
     } catch (error) {
@@ -62,7 +63,7 @@ onMounted(fetchMounted);
                 </tr>
             </thead>
             <tbody class="relative">
-                <tr v-for="(data, index) in datas" :key="data.Id">
+                <tr v-for="(data, index) in datas" :key="data.id">
                     <td class="p-2 text-center whitespace-nowrap min-w-max">
                         {{ index + 1 }}
                     </td>
@@ -75,7 +76,7 @@ onMounted(fetchMounted);
                     </td>
                     <td>
                         <Select
-                            :keys="data.Id"
+                            :keys="data.id"
                             :items="['Belum lunas', 'Lunas']"
                             :defaults="data.Status"
                             styles="min-w-full relative z-5 text-black"

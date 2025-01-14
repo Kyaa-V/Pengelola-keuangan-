@@ -17,7 +17,7 @@ export class formService {
         console.log("proses 1");
         const { id, status }: UpdateHutang = request;
         console.log("testing 3");
-        const query = "UPDATE hutang SET Status = ? WHERE Id = ?";
+        const query = "UPDATE formData SET Status = ? WHERE Id = ?";
         const data = await queries.post(query, [status, id]);
 
         console.log("testing selesai");
@@ -44,41 +44,73 @@ export class formService {
         return { data };
     }
     static async add(request: AddForm) {
-        console.log("proses 1");
-        const {
-            name,
-            modal,
-            category,
-            sell,
-            nameCustomer,
-            information
-        }: AddForm = VALIDATION.validate(Schema.addForm, request);
-        console.log("testing 3");
-        const newUuid = uuidv4();
-        console.log(newUuid);
-        const query =
-            "INSERT INTO formData(id,name,category,modal,jual,information,nameCs) VALUES(?,?,?,?,?,?,?)";
-        const data = await queries.post(query, [
-            newUuid,
-            name,
-            category,
-            modal,
-            sell,
-            information,
-            nameCustomer
-        ]);
+        try {
+            console.log("Proses dimulai");
 
-        console.log("testing selesai");
-        console.log(data);
+            const {
+                name,
+                modal,
+                category,
+                sell,
+                hutang,
+                namePerson,
+                nameCustomer,
+                information
+            }: AddForm = VALIDATION.validate(Schema.addForm, request);
 
-        return { data };
+            const newUuid = uuidv4();
+            console.log("Generated UUID:", newUuid);
+            console.log(hutang);
+            let query, values;
+            if (hutang) {
+                query = `
+                INSERT INTO formData(id, name, category, modal, jual,
+                information, nameCs, Status,namePerson)
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                values = [
+                    newUuid,
+                    name,
+                    category,
+                    modal,
+                    sell,
+                    information,
+                    nameCustomer,
+                    "Belum lunas",
+                    namePerson
+                ];
+            } else {
+                query = `
+                INSERT INTO formData(id, name, category, modal, jual, information, nameCs)
+                VALUES(?, ?, ?, ?, ?, ?, ?)`;
+                values = [
+                    newUuid,
+                    name,
+                    category,
+                    modal,
+                    sell,
+                    information,
+                    nameCustomer
+                ];
+            }
+
+            const data = await queries.post(query, values);
+
+            console.log("Proses selesai");
+            console.log("Hasil:", data);
+
+            return { data };
+        } catch (error) {
+            console.error("Terjadi kesalahan:", error);
+            throw error;
+        }
     }
+
     static async select(request: SelectDate) {
         const { date }: SelectDate = request;
 
         console.log("testing 3");
         const query = `
-        SELECT * FROM formData WHERE DATE(at_created) =  ?`;
+        SELECT * FROM formData WHERE DATE(at_created) =  ? AND Status = 'Lunas'`;
         const data = await queries.post(query, [date]);
         console.log("testing selesai");
         console.log(data);
@@ -90,7 +122,7 @@ export class formService {
 
         console.log("testing 3");
         const query = ` SELECT * FROM formData WHERE category = ? AND
-        DATE(at_created) = ?`;
+        DATE(at_created) = ? AND Status = 'Lunas'`;
         const data = await queries.post(query, [category, date]);
         console.log("testing selesai");
         console.log(data);
@@ -102,7 +134,7 @@ export class formService {
 
         console.log(dataCategory);
         console.log("testing 3");
-        const query = `SELECT * FROM formData WHERE category =  ?`;
+        const query = `SELECT * FROM formData WHERE category =  ? AND Status = 'Lunas'`;
         const data = await queries.post(query, [dataCategory]);
         console.log("testing selesai");
         console.log(data);
@@ -111,56 +143,49 @@ export class formService {
     }
     static async today() {
         const query =
-            "SELECT * FROM formData WHERE DATE(at_created) = CURDATE()";
+            "SELECT * FROM formData WHERE DATE(at_created) = CURDATE() AND Status = 'Lunas'";
         const data = await queries.get(query);
         console.log(responseDataTable(data));
         return responseDataTable(data);
     }
     static async yesterday() {
         const query =
-            "SELECT * FROM formData WHERE DATE(at_created) = CURDATE() - INTERVAL 1 DAY";
+            "SELECT * FROM formData WHERE DATE(at_created) = CURDATE() - INTERVAL 1 DAY AND Status = 'Lunas'";
         const data = await queries.get(query);
         console.log(responseDataTable(data));
         return responseDataTable(data);
     }
     static async inWeeks() {
         const query =
-            "SELECT * FROM formData WHERE YEARWEEK(at_created, 1) = YEARWEEK(CURDATE(), 1)";
+            "SELECT * FROM formData WHERE YEARWEEK(at_created, 1) = YEARWEEK(CURDATE(), 1) AND Status = 'Lunas'";
         const data = await queries.get(query);
         console.log(responseDataTable(data));
         return responseDataTable(data);
     }
     static async inMonth() {
         const query =
-            "SELECT * FROM formData WHERE MONTH(at_created) = MONTH(CURDATE()) AND YEAR(at_created) = YEAR(CURDATE())";
+            "SELECT * FROM formData WHERE MONTH(at_created) = MONTH(CURDATE()) AND YEAR(at_created) = YEAR(CURDATE()) AND Status = 'Lunas'";
         const data = await queries.get(query);
         console.log(responseDataTable(data));
         return responseDataTable(data);
     }
     static async lastMonth() {
         const query =
-            "SELECT * FROM formData WHERE MONTH(at_created) = MONTH(CURDATE() - INTERVAL 1 MONTH)  AND YEAR(at_created) = YEAR(CURDATE() - INTERVAL 1 MONTH)";
+            "SELECT * FROM formData WHERE MONTH(at_created) = MONTH(CURDATE() -INTERVAL 1 MONTH)  AND YEAR(at_created) = YEAR(CURDATE() - INTERVAL 1 MONTH) AND Status = 'Lunas'";
         const data = await queries.get(query);
         console.log(responseDataTable(data));
         return responseDataTable(data);
     }
     static async oneMonth() {
         const query =
-            "SELECT DAY(at_created) AS tanggal,COUNT(*) AS jumlah_transaksi FROM formData WHERE MONTH(at_created) = MONTH(CURRENT_DATE()) AND YEAR(at_created) = YEAR(CURRENT_DATE()) GROUP BY tanggal ORDER BY tanggal ASC";
+            "SELECT DAY(at_created) AS tanggal,COUNT(*) AS jumlah_transaksi FROM formData WHERE MONTH(at_created) = MONTH(CURRENT_DATE()) AND YEAR(at_created) = YEAR(CURRENT_DATE()) AND Status = 'Lunas' GROUP BY tanggal ORDER BY tanggal ASC ";
         const data = await queries.get(query);
         console.log(data);
         return data;
     }
     static async gethutang() {
         const query =
-            "SELECT Id, Transaksi, Name, Hutang, Status,DATE_FORMAT(Date, '%Y-%m-%d') AS date FROM hutang WHERE Status = 'Belum lunas'";
-        const data = await queries.get(query);
-        console.log(data);
-        return data;
-    }
-    static async gethutanglunas() {
-        const query =
-            "SELECT Id, Transaksi, Name, Hutang, Status,DATE_FORMAT(Date, '%Y-%m-%d') AS date FROM hutang WHERE Status = 'Lunas'";
+            "SELECT id,namePerson AS Name, name as Transaksi, jual as Hutang, Status,DATE_FORMAT(at_created, '%Y-%m-%d') AS date FROM formData  WHERE Status = 'Belum lunas'";
         const data = await queries.get(query);
         console.log(data);
         return data;

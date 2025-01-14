@@ -16,4 +16,3 @@ publicRouter.get("/in-month", formController.inMonth);
 publicRouter.get("/last-month", formController.lastMonth);
 publicRouter.get("/one-month", formController.oneMonth);
 publicRouter.get("/get-hutang", formController.getHutang);
-publicRouter.get("/get-hutang-lunas", formController.getHutangLunas);
