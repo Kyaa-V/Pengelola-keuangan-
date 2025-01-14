@@ -23,7 +23,9 @@ interface IFormData {
     category: string;
     nameCustomer: string;
     information: string;
+    hutang?: string;
     status: string;
+    namePerson?: string;
 }
 
 const { isLoading, onLoading } = IsLoading();
@@ -35,6 +37,8 @@ const formData = ref<IFormData>({
     sell: 0,
     category: "",
     nameCustomer: "",
+    hutang: "",
+    namePerson: "",
     information: "",
     status: "Pemasukan"
 });
@@ -45,6 +49,8 @@ const handleClick = () => {
     formData.value.modal = 0;
     formData.value.sell = 0;
     formData.value.category = "";
+    formData.value.hutang = "";
+    formData.value.namePerson = "";
     formData.value.nameCustomer = "";
     formData.value.status = "Pemasukan";
 };
@@ -97,26 +103,26 @@ const handleSubmit = async e => {
             <h1 class="text-bold text-center text-xl">Tambah Pengeluaran</h1>
             <div class="mt-3 px-5">
                 <form @submit="handleSubmit">
-                    <Input
-                        name="Transkasi"
-                        placeholder="Transaksi"
-                        v-model:value="formData.name"
-                    />
-                    <p
-                        v-if="errDataForm.name"
-                        class="text-xs text-red-600 ml-3 mt-1"
-                    >
-                        {{ errDataForm.name }}
-                    </p>
                     <InputRadio
                         name="status"
-                        :nameCs="['Pemasukan', 'Modal', 'Setor', 'Hutang']"
+                        :nameCs="['Pemasukan', 'Modal', 'Setor']"
                         v-model:modelValue="formData.status"
                     />
                     <ModalAwal :status="formData.status" />
                     <Setor :status="formData.status" />
                     <Hutang :status="formData.status" :object="formData.name" />
                     <div v-if="formData.status == 'Pemasukan'">
+                        <Input
+                            name="Transkasi"
+                            placeholder="Transaksi"
+                            v-model:value="formData.name"
+                        />
+                        <p
+                            v-if="errDataForm.name"
+                            class="text-xs text-red-600 ml-3 mt-1"
+                        >
+                            {{ errDataForm.name }}
+                        </p>
                         <div class="flex gap-2">
                             <div>
                                 <Input
@@ -147,6 +153,23 @@ const handleSubmit = async e => {
                                 </p>
                             </div>
                         </div>
+                        <InputRadio
+                            name="Hutang"
+                            :nameCs="['Hutang']"
+                            v-model:modelValue="formData.hutang"
+                        />
+
+                        <div v-if="formData.hutang == 'Hutang'">
+                          
+                          
+                        <Input
+                            name="Nama orang"
+                            placeholder="Nama orang"
+                            v-model:value="formData.namePerson"
+                        />
+                        </div>
+
+
                         <Select
                             name="Pilih Kategory"
                             defaults="Kategory"
@@ -154,9 +177,9 @@ const handleSubmit = async e => {
                             @update:modelValue="prosesResponseCategory"
                             :items="[
                                 'Hp',
-                                'Kartu',
+                                'Acc',
                                 'Service',
-                                'Kuota',
+                                'Kuota & pulsa',
                                 'E-wallet'
                             ]"
                         />

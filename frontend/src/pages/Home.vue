@@ -15,6 +15,7 @@ const datasTableTransaction = ref([]);
 onMounted(async () => {
     try {
         const data = await Fetch.get("/one-month");
+        console.log(data);
         const daysInMonth = new Date(
             new Date().getFullYear(),
             new Date().getMonth() + 1,

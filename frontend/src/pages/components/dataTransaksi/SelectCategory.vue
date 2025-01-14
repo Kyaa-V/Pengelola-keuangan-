@@ -27,7 +27,7 @@ const prosesResponseCategory = async ({ item, index }) => {
 <template>
     <div v-if="status == 'Category'">
         <Select
-            :items="['Hp', 'Kartu', 'Service', 'Kuota', 'E-wallet']"
+            :items="['Hp', 'Acc', 'Service', 'Kuota & pulsa', 'E-wallet']"
             name="Pilih Kategory"
             defaults="Kategory"
             styles="my-2 mx-3 max-w-full relative z-5 text-black"

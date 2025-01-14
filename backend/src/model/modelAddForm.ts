@@ -5,6 +5,8 @@ export interface AddForm {
     category: string;
     nameCustomer: string;
     status: string;
+    hutang?: string;
+    namePerson?: string;
     information?: string;
 }
 export interface SelectDate {

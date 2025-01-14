@@ -58,7 +58,7 @@ const formatCurrency = price => {
     return Intl.NumberFormat("id-ID", {
         style: "currency",
         currency: "IDR"
-    }).format(price);
+    }).format(price * 1000);
 };
 
 const handleRows = item => {
@@ -153,8 +153,6 @@ onMounted(async () => {
         console.error("Error fetching data:", err);
     }
 });
-
-
 </script>
 
 <template>
