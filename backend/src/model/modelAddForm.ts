@@ -19,6 +19,9 @@ export interface SelectCustom {
 export interface SelectDataCategory {
     dataCategory: string;
 }
+export interface Modal {
+    modal: number;
+}
 export interface Hutang {
     name: string;
     mount: number;

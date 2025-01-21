@@ -5,8 +5,9 @@ import {
     SelectDate,
     SelectDataCategory,
     SelectCustom,
-    Hutang ,
-    UpdateHutang
+    Hutang,
+    UpdateHutang,
+    Modal
 } from "../model/modelAddForm";
 import { responseError } from "../error/response-error";
 import { formService } from "../service/form-service";
@@ -26,6 +27,21 @@ export class formController {
             next(new responseError(401, "gagal post data coba ulangi  lagi"));
         }
     }
+    static async modal(req: Request, res: Response, next: NextFunction) {
+        try {
+            console.log(req.body);
+            const request: Modal = req.body as Modal;
+            console.log("start");
+            const data = await formService.modal(request);
+            res.status(201).json({ data: data });
+        } catch (error) {
+            if (error instanceof ZodError) {
+                return next(error);
+            }
+            next(new responseError(401, "gagal post data coba ulangi  lagi"));
+        }
+    }
+
     static async hutang(req: Request, res: Response, next: NextFunction) {
         try {
             console.log(req.body);

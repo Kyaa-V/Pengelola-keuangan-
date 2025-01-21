@@ -5,6 +5,7 @@ export const publicRouter = express.Router();
 
 publicRouter.post("/add-form-transaksi", formController.addForm);
 publicRouter.post("/hutang", formController.hutang);
+publicRouter.post("/modal", formController.modal);
 publicRouter.patch("/update-hutang-status", formController.updateHutang);
 publicRouter.post("/select-date-table", formController.selectData);
 publicRouter.post("/select-cutom-table", formController.selectCustom);
