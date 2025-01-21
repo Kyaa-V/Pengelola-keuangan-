@@ -4,7 +4,8 @@ import {
     SelectDataCategory,
     SelectCustom,
     Hutang,
-    UpdateHutang
+    UpdateHutang,
+    Modal
 } from "../model/modelAddForm";
 import { Schema } from "../validations/schemaZod";
 import { responseDataTable } from "../model/responseTabel";
@@ -13,6 +14,18 @@ import { v4 as uuidv4 } from "uuid";
 import { VALIDATION } from "../validations/validations";
 
 export class formService {
+    static async modal(request: Modal) {
+        console.log("proses 1");
+        const { modal }: Modal = request;
+        console.log("testing 3");
+        const query = "INSERT INTO expend (modal) VALUES (?)";
+        const data = await queries.post(query, [modal]);
+
+        console.log("testing selesai");
+        console.log(data);
+
+        return { data };
+    }
     static async updatehutang(request: UpdateHutang) {
         console.log("proses 1");
         const { id, status }: UpdateHutang = request;
@@ -25,6 +38,7 @@ export class formService {
 
         return { data };
     }
+
     static async hutang(request: Hutang) {
         console.log("proses 1");
         const { name, mount, object }: Hutang = VALIDATION.validate(
